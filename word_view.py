@@ -10,49 +10,47 @@ Module for game's visualization
 #        pass
 
 import pygame
+import sys
+import random
 
 class WordGameView:
-    """
-    A visual representation of the word game.
-
-    Attributes:
-        model: a WordGameModel instance representing the game state.
-    """
-
-    def __init__(self, model):
-        self.model = model
-        self.screen_width = 800
-        self.screen_height = 600
-        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
-        pygame.display.set_caption('Word Game')
-        self.font = pygame.font.Font(None, 36)
+    def __init__(self, screen_width, screen_height, word_list):
+        pygame.init()
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.screen = pygame.display.set_mode((screen_width, screen_height))
+        pygame.display.set_caption("Word Bubble Game")
         self.clock = pygame.time.Clock()
+        self.word_list = word_list
+        self.font = pygame.font.Font(None, 36)
+        self.bubble_colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]  
 
-    def draw(self):
-        self.screen.fill((255, 255, 255))
-        
-        # Display the target word
-        target_word_text = self.font.render("Target Word: " + self.model.current_word, True, (0, 0, 0))
-        self.screen.blit(target_word_text, (50, 50))
-        
-        # Display the letter bubbles
-        for bubble in self.model.letter_bubbles:
-            pygame.draw.circle(self.screen, (0, 0, 255), (bubble.x, bubble.y), bubble.radius)
-            letter_text = self.font.render(bubble.letter, True, (255, 255, 255))
-            self.screen.blit(letter_text, (bubble.x - bubble.radius // 2, bubble.y - bubble.radius // 2))
-        
-        pygame.display.update()
+    def draw_board(self, target_word, letter_bubbles):
+        self.screen.fill((255, 255, 255))  
+        self.draw_target_word(target_word)
+        self.draw_letter_bubbles(letter_bubbles)
+        pygame.display.flip()
 
-# Example usage:
-# Assuming WordGameModel is defined with appropriate attributes
-# model = WordGameModel()
-# view = WordGameView(model)
+    def draw_target_word(self, target_word):
+        text = self.font.render("Target Word: " + target_word, True, (0, 0, 0))
+        self.screen.blit(text, (20, 20))
 
-# Main game loop
-# while True:
-#     view.draw()
-#     pygame.display.update()
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             pygame.quit()
-#             sys.exit()
+    def draw_letter_bubbles(self, letter_bubbles):
+        for bubble in letter_bubbles:
+            pygame.draw.circle(self.screen, self.bubble_colors[random.randint(0, 2)], bubble[0], bubble[1])
+
+    def update_display(self):
+        pygame.display.flip()
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+    def get_click_position(self):
+        mouse_pos = pygame.mouse.get_pos()
+        return mouse_pos
+
+    def close(self):
+        pygame.quit()
