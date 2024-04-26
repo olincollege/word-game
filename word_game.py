@@ -28,15 +28,13 @@ class Game:
 
     def generate_word(self):
         """
-        Selects a word from the word list as the given word that the player
-        has to spell.
+        Generates a new word for the game by randomly selecting a word from word list.
 
-        Args:
-            self:
-        
+        Args: 
+            None.
+
         Returns:
-            The selected word.
-
+            A string that represents the newly generated word.
         """
         self.current_word = random.choice(self.word_list)
         self.pointer = 0
@@ -50,10 +48,10 @@ class Game:
     def generate_letters(self):
         """
         Generates bubbles of letters, including all of the correct letters to 
-        spell the given word and additional incorrect letters
+        spell the given word and additional incorrect letters.
 
         Args:
-            self:
+            None.
         
         Returns:
             None.
@@ -79,7 +77,7 @@ class Game:
         Runs timer for the duration of the game.
 
         Args:
-            self:
+            None.
         
         Returns:
             None.
@@ -97,7 +95,7 @@ class Game:
                 clicked_letter (str): The letter just clicked by the player.
 
             Returns:
-                bool: True if the clicked letter is correct, False otherwise.
+                A boolean that represents True if the clicked letter is correct, and False otherwise.
             """
             if 0 <= self.pointer < len(self.current_word): #within range
                 current_letter = self.current_word[self.pointer]
@@ -107,12 +105,39 @@ class Game:
                 return False
 
     def update_score(self):
+        """
+        Increases the score by 1.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
         self.score += 1
 
     def time_penalty(self):
+        """
+        Apply a time penalty of 3 units to the remaining time.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
         self.time_remaining -= 3
         
     def game_over(self):
+        """
+        Check if the game is over due to time running out.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
         if self.time_remaining == 0:
             print("out of time!")
             background = pygame.image.load()
