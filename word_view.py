@@ -1,17 +1,9 @@
 """
 Module for game's visualization
 """
-#class Board:
-#    def __init__():
-        #board
-        #display time
-        #display target word
-        #display letter bubbles
-#        pass
-
-import pygame
 import sys
 import random
+import pygame
 
 class WordGameView:
     def __init__(self, screen_width, screen_height, word_list):
