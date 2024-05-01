@@ -2,21 +2,56 @@
 Module for taking player inputs.
 """
 
+import time
 import pygame
-from word_game import Game
-from word_view import WordGameView
 
 
 class Controller:
-    def __init__(self, game, view):
+    def __init__(self):
         """
         Initialize the Controller class.
         """
-        self.game = game
-        self.view = view
-        self.running = True
+        self.score = 0
+        self.time_remaining = 0
 
-    def get_click(self):
+        self.game_over = False
+        self.won = False
+        self.bubbles = []
+        self.current_word = ""
+        self.pointer = 0
+        self.epoch = 0
+
+
+        self.word_complete = False
+
+    def reset_game(self):
+        self.score = 0
+        self.time_remaining = 60
+        self.epoch = time.time()
+
+        self.game_over = False
+        self.won = False
+
+    def next_word(self, new_word, bubbles):
+        self.bubbles = bubbles
+        self.current_word = new_word
+        self.pointer = 0
+
+        self.word_complete = False
+       
+
+    def update(self, events):
+        """
+        Called per game loop iteration
+        """
+
+        self.get_click(events)
+        now = time.time()
+        self.time_remaining -= now - self.epoch
+        self.epoch = now
+        self.check_game_over()
+
+    def get_click(self, events):
         """
         Handle the event of mouse button clicks from the player.
 
@@ -26,34 +61,62 @@ class Controller:
         Returns:
             None.
         """
-        mouse_position = None 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+        mouse_position = None
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_position = event.pos
                 self.handle_click(mouse_position)
             elif event.type == pygame.KEYDOWN:
-                key = event.key
-                self.handle_key_input(key) 
-        return
-    
+                if event.key == pygame.K_RETURN:
+                    if self.game_over:
+                        self.reset_game()
+                    else:
+                        pygame.display.flip()
+
+
+        return mouse_position
+
+    def update_score(self):
+        """
+        Increases the score by 1.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
+        self.score += 1
+
     def handle_click(self, mouse_position):
         """
         Handle a mouse click, updating the game state or view.
-        
+
         Args:
             None.
-        
+
         Returns:
             None.
         """
         if self.is_correct_letter(mouse_position):
-            self.game.pointer += 1
-            self.game.update_score()
+            self.pointer += 1
+            self.update_score()
         else:
-            self.game.time_penalty()
-        return
+            self.time_penalty()
+
+        self.check_word_complete()
+
+    def time_penalty(self):
+        """
+        Apply a time penalty of 3 units to the remaining time.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
+        self.time_remaining -= 3
 
     def is_correct_letter(self, mouse_position):
         """
@@ -65,34 +128,30 @@ class Controller:
         Returns:
             A boolean that represents True if the clicked letter is correct, False otherwise.
         """
-        correct_letter_position = self.view.get_letter_position(self.game.current_word[self.game.pointer]) #get the letter pos
-        radius = self.view.get_bubble_radius()
-        distance = ((mouse_position[0] - correct_letter_position[0]) ** 2 
-            + (mouse_position[1] - correct_letter_position[1]) ** 2) ** 0.5
-        #distance formula from google
-        if distance <= radius: #then clicked in circle
-            return True
-        else:
-            return False
+        correct_bubbles = [bubble for bubble in self.bubbles if bubble.letter == self.current_word[self.pointer]]
 
-    def handle_key_input(self, key):
-        """
-        Handle keyboard events by takinf in key inputs.
+        for bubble in correct_bubbles:
+            correct_letter_position = bubble.pos  # get the letter pos
+            distance = (
+                (mouse_position[0] - correct_letter_position[0]) ** 2
+                + (mouse_position[1] - correct_letter_position[1]) ** 2
+            ) ** 0.5
+            # distance formula from google
+            if distance <= bubble.radius:  # then clicked in circle
+                bubble.clicked = True
+                return True
+            
+        return False
     
-        Args:
-            key (int): The key code corresponding to the pressed key.
+    def check_word_complete(self):
+        if self.pointer == len(self.current_word):
+            print("complete!")
+            self.word_complete = True
+            self.score += 1
 
-        Returns:
-            None.
+    def check_game_over(self):
         """
-        if key == pygame.K_q:
-            self.game.quit_game()
-        elif key == pygame.K_ESCAPE:
-            self.game.pause() #not implemented yet
- 
-    def restart(self):
-        """
-        Restart the game.
+        Check if the game is over due to time running out.
 
         Args:
             None.
@@ -100,5 +159,7 @@ class Controller:
         Returns:
             None.
         """
-        self.game.reset()  
-        self.view.update()  
+        if self.time_remaining < 0:
+            print("out of time!")
+            self.game_over = True
+            # background = pygame.image.load()

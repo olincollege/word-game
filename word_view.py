@@ -1,26 +1,71 @@
 """
 Module for game's visualization
 """
-import sys
-import random
+
 import pygame
 
-class WordGameView:
-    def __init__(self, screen_width, screen_height, word_list):
+class View:
+    """
+    Creates class representing the view of the game state.
+    """
+    def __init__(self):
         """
         Initialize the View class.
         """
         pygame.init()
-        self.screen_width = screen_width
-        self.screen_height = screen_height
-        self.screen = pygame.display.set_mode((screen_width, screen_height))
+
+        self.screen_width = 700
+        self.screen_height = 500
+        self.screen = pygame.display.set_mode(
+            (self.screen_width, self.screen_height))
         pygame.display.set_caption("Word Bubble Game")
         self.clock = pygame.time.Clock()
-        self.word_list = word_list
-        self.font = pygame.font.Font(None, 36)
-        self.bubble_colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]  
+        self.big_font = pygame.font.Font(None, 60)
+        self.font = pygame.font.Font(None, 48)
+        self.medium_font = pygame.font.Font(None, 36)
+        self.small_font = pygame.font.Font(None, 28)
+        self.color = (240, 84, 89)
+    
+    def draw_intro(self):
+        self.screen.fill((255 , 255, 255))
+        text = self.medium_font.render(
+                    "Enter to Start", 
+                    True, (0, 0, 0))
+        self.screen.blit(text, ((self.screen_width / 2) - 150,
+                                self.screen_height / 1.8))
 
-    def draw_board(self, target_word, letter_bubbles):
+    def draw_game_over(self):
+        """
+        Runs the screen when player hits game over state.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
+        self.screen.fill((255, 255, 255))
+        text = self.medium_font.render(
+            "Hit Enter to Restart", 
+            True, (0, 0, 0))
+        self.screen.blit(text, ((self.screen_width / 2) - 150,
+                                self.screen_height / 1.8))
+        text_2 = self.small_font.render(
+            "Credits to Xethron on Github for the word list!", 
+            True, (0, 0, 0))
+        self.screen.blit(text_2, (
+            (self.screen_width / 2) - 200,
+            (self.screen_height / 2) + 100))
+        text_3 = self.big_font.render(
+            "Game Over!",
+            True, (0, 0, 0))
+        self.screen.blit(text_3, (
+            (self.screen_width / 2) - 170,
+            (self.screen_height /2) - 150))
+        pygame.display.flip()
+
+
+    def draw_board(self, target_word, letter_bubbles, score, time_remaining):
         """
         Draws the game board on the screen.
 
@@ -29,9 +74,9 @@ class WordGameView:
         the display to show the changes.
 
         Args:
-            - target_word (str): The word that the player needs to guess.
-            - letter_bubbles (list): A list of letter bubbles to display on the screen. 
-            Each letter bubble is represented as a tuple containing the letter and its position.
+            target_word: a string representing the word that the player needs 
+                         to guess.
+            letter_bubbles: a list of letter bubbles to display on the screen. 
 
         Returns:
             None
@@ -39,14 +84,49 @@ class WordGameView:
         self.screen.fill((255, 255, 255))  
         self.draw_target_word(target_word)
         self.draw_letter_bubbles(letter_bubbles)
+        self.draw_score(score)
+        self.draw_time_remaining(time_remaining)
         pygame.display.flip()
+
+    def draw_score(self, score):
+        """
+        Draws the player's score that is displayed during the game.
+
+        Args:
+            score: an integer representing the player's current score.
+        
+        Returns:
+            None.
+        """
+        text = self.font.render(str(score), True, (0, 0, 0))
+        self.screen.blit(text,
+                         (self.screen_width - (text.get_width() + 10), 
+                          self.screen_height - (text.get_height() + 10)))
+        text_2 = self.font.render("Score: ", True, (0, 0, 0))
+        self.screen.blit(text_2, (self.screen_width - (text_2.get_width() + text.get_width() + 10),
+                         self.screen_height - (text.get_height() + 10)))
+
+    def draw_time_remaining(self, time_remaining):
+        """
+        Draws the remaining time of the current game.
+
+        Args:
+            time_remaining: a float representing the amound of time remaining
+            on the player's timer for the current game run.
+        
+        Returns:
+            None.
+        """
+        text = self.font.render(str(round(time_remaining)), True, (0, 0, 0))
+        self.screen.blit(text, (self.screen_width - (text.get_width() + 50) , 50))
 
     def draw_target_word(self, target_word):
         """
         Draws the target word at the top of the screen with a specific font 
 
         Args:
-            - target_word (str): The word that the player needs to guess.
+            target_word: a string representing the word that the player needs 
+            to spell with the bubbles.
 
         Returns:
             None
@@ -54,71 +134,39 @@ class WordGameView:
         text = self.font.render("Target Word: " + target_word, True, (0, 0, 0))
         self.screen.blit(text, (20, 20))
 
-    def draw_letter_bubbles(self, letter_bubbles):
+    def draw_letter_bubbles(self, bubbles):
         """
-        Draws letter bubbles on the screen, from a list of letter bubbles that are shown as a tuple.
+        Draws letter bubbles on the screen, from a list of letter bubbles that 
+        are shown as a tuple.
 
         Args:
-            - letter_bubbles (list): A list of letter bubbles to draw.
-            Each letter bubble is represented as a tuple containing the position (x, y) 
-            and the radius of the bubble.
+            bubbles: a list of letter bubbles, which is a circle with a given 
+            letter.
 
         Returns:
             None
         """
-        for bubble in letter_bubbles:
-            pygame.draw.circle(self.screen, self.bubble_colors[random.randint(0, 2)], bubble[0], bubble[1])
+        for bubble in bubbles:
+            if not bubble.clicked:
+                pygame.draw.circle(self.screen, self.color, 
+                                   bubble.pos, bubble.radius)
+                text = self.font.render(bubble.letter, True, (0, 0, 0))
+                self.screen.blit(text, (bubble.x - 9, bubble.y - 9))
 
-    def update_display(self):
+class Bubble():
+    """
+    Class respresenting the circle with proper letters that players click on. 
+    """
+    def __init__(self, index, letter):
         """
-        Updates the display to show any changes made to the screen.
-
-        Args:
-            None
-
-        Returns:
-            None
+        Initializes the Bubble class.
         """
-        pygame.display.flip()
+        x_index = index % 5
+        self.x = (x_index * 100) + 100
+        y_index = int(index / 5)
+        self.y = (y_index * 100) + 100
+        self.pos = (self.x, self.y)
+        self.radius = 30
+        self.letter = letter
 
-    def handle_events(self):
-        """
-        Checks for events in event queue and handles events such as quitting the game.
-
-        Args:
-            None
-
-        Returns:
-            None
-        """
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-    def get_click_position(self):
-        """
-        Get the current position of the mouse cursor.
-
-        Args:
-            None
-
-        Returns:
-            tuple: A tuple containing the x and y coordinates of the mouse cursor.
-           The first element represents the x-coordinate, and the second
-           element represents the y-coordinate.
-        """
-        mouse_pos = pygame.mouse.get_pos()
-        return mouse_pos
-
-    def close(self):
-        """
-        Closes the Pygame application.
-
-        Args:
-            None
-
-        Returns:
-            None
-        """
-        pygame.quit()
+        self.clicked = False

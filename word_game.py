@@ -2,29 +2,49 @@
 Module for calculations and gameplay.
 """
 import random
-import time
-import sys
 import pygame
+import csv
+
+from word_controller import Controller
+from word_view import Bubble, View
 
 class Game:
-    def __init__(self):
+    def __init__(self, controller, view):
         """
         Initialize the Game class.
         """
-        self.SCREEN_WIDTH = 300
-        self.SCREEN_HEIGHT = 150
-        self.time_remaining = 60
         self.clock = pygame.time.Clock()
-        self.word_list = ["apple", "banana", "cat"]
+        self.word_list = []
         self.letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
                         "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
                         "w", "x", "y", "z"]
         self.current_word = ""
-        self.bubbles = []
-        self.score = 0
+        self.bubbles: list[Bubble] = []
+        self.controller: Controller = controller
+        self.view: View = view
+    
+    def load_word_list(self):
+        new_list = []
+        with open("word_list.txt", encoding="utf-8") as file:
+            reader = file.readlines()
 
-        #added so we can check each letter while game is going
-        self.pointer = 0
+        for line in reader:
+            new_list.append(line[:-1])
+        self.word_list = new_list
+
+    def new_word(self):
+        self.generate_word()
+        self.generate_letters()
+
+        self.controller.next_word(self.current_word, self.bubbles)
+        self.controller.current_word = self.current_word
+
+    def new_game(self):
+        self.view.draw_intro()
+        self.controller.reset_game()
+        self.load_word_list()
+        self.new_word()
+
 
     def generate_word(self):
         """
@@ -37,7 +57,7 @@ class Game:
             A string that represents the newly generated word.
         """
         self.current_word = random.choice(self.word_list)
-        self.pointer = 0
+        self.controller.current_word = self.current_word
 
         self.letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
                         "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
@@ -57,103 +77,49 @@ class Game:
             None.
         """
         self.bubbles.clear()
+        new_bubbles = []
 
         for letter in self.current_word:
-            if letter in self.bubbles:
-                continue
-            else:
-                self.bubbles.append(letter)
+            new_bubbles.append(letter)
+            try:
                 self.letters.remove(letter)
+            except:
+                pass
 
-        for i in range(3):
+        for i in range(7):
             random_letter = random.choice(self.letters)
             self.letters.remove(random_letter)
-            self.bubbles.append(random_letter)
+            new_bubbles.append(random_letter)
+
+        random.shuffle(new_bubbles)
+        self.bubbles = [Bubble(i, letter) for i, letter in enumerate(new_bubbles)]
 
         return self.bubbles
 
-    def countdown(self):
-        """
-        Runs timer for the duration of the game.
-
-        Args:
-            None.
+    def try_again(self):
+        self.current_word = ""
+        self.bubbles: list[Bubble] = []
+        self.new_word()
         
-        Returns:
-            None.
+    def update(self, events):
         """
-        while self.time_remaining > 0:
-            time.sleep(1)
-            self.time_remaining -= 1
-        print("time up")
-
-        def is_correct_letter(self, clicked_letter):
-            """
-            Check if the clicked letter is correct.
-
-            Args:
-                clicked_letter (str): The letter just clicked by the player.
-
-            Returns:
-                A boolean that represents True if the clicked letter is correct, and False otherwise.
-            """
-            if 0 <= self.pointer < len(self.current_word): #within range
-                current_letter = self.current_word[self.pointer]
-                self.pointer += 1 #update if found
-                return clicked_letter == current_letter
-            else:
-                return False
-
-    def update_score(self):
+        Called every iteration of the game loop and updates game state
         """
-        Increases the score by 1.
 
-        Args:
-            None.
 
-        Returns:
-            None.
-        """
-        self.score += 1
+        if self.controller.game_over:
+            # show game over screen
+            self.try_again()
+            self.view.draw_game_over()
+        elif self.controller.word_complete:
+            self.new_word()
+        else:
+            self.view.draw_board(self.current_word, self.bubbles, self.controller.score, self.controller.time_remaining)
 
-    def time_penalty(self):
-        """
-        Apply a time penalty of 3 units to the remaining time.
+        self.controller.update(events)
 
-        Args:
-            None.
 
-        Returns:
-            None.
-        """
-        self.time_remaining -= 3
-        
-    def game_over(self):
-        """
-        Check if the game is over due to time running out.
 
-        Args:
-            None.
-
-        Returns:
-            None.
-        """
-        if self.time_remaining == 0:
-            print("out of time!")
-            background = pygame.image.load()
-
-    def quit_game():
-        """
-        Exits the game.
-
-        Args: 
-            None.
-
-        Returns:
-            None.
-        """
-        pygame.quit()
-        sys.exit(0)
 
 
 #start button
