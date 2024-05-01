@@ -6,6 +6,8 @@ Letter Bubbles is a game in which the player the player clicks on corresponding 
 
 You can clone the repo or download the four files:word_game.py, word_controller.py, and word_view, main.py. Run main.py to try the program!
 
+Please visit our website: olincollege.github.io/word-game/ for more information.
+
 ## Requirements
 This game is built using the pygame library.
 
