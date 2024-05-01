@@ -4,8 +4,14 @@
 Although we did not pull the game's concept from any existing titles, we hoped to create a game that was vary to understand and that all people can enjoy. We settled on a game that we believe has an addicting yet relaxing game loop.
 
 ## How to Use
+The game can be accessed here: https://github.com/olincollege/word-game.
 
-Clone the repo and or download the required files, word_game.py, word_controller.py., word_view.py, and main.py,
+Clone the repo and or download the required files, word_game.py, word_controller.py., word_view.py, and main.py. Please note that you need to have installed pygame! If you do not have pygame, please follow the instructions advised on https://www.pygame.org/wiki/GettingStarted.
+
+Quick start:
+"""
+python3 -m pip install -U pygame --user
+"""
 
 ## The Process
 When you boot up the game, the program will select a random word from the word list as your target word. With that target word, the program will add each of its letters into a list, and then it will add additional letters which are incorrect. The letters are shuffled, so the order that they appear to the player is random.
@@ -21,6 +27,9 @@ Surprisingly, implementing a restart function was difficult. There was a lot to 
 ## Results
 ![](https://github.com/olincollege/word-game/blob/main/letter_bubbles_screenshot.png?raw=true)
 This is how the gameplay looks!
+
+![](FinalPresentation.mp4)
+Here is a video summarizing the project.
 
 ## Future
 If provided more time, the game can be much more user-friendly. The game lacks input feedback-- for example, when the player clicks in incorrect letter, there should be an indication that the player misclicked and they lost time. A marker that underlines or bolds the player's current letter can also help clarify the game's mechanics. There are glaring shortcomings to its visuals, such as its simplistic look and the misalignment of texts. Additionally, there lacks features like a start menu and high scores. Despite these limitations, this project is complete and I have learned so much about designing games and using pygame.
