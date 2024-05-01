@@ -4,25 +4,13 @@ Letter Bubbles is a game in which the player the player clicks on corresponding 
 
 ## How to Use
 
-Once you have word_game.py, word_controller.py, and word_view, run main.py to try the program.
+You can clone the repo or download the four files:word_game.py, word_controller.py, and word_view, main.py. Run main.py to try the program!
 
 ## Requirements
 This game is built using the pygame library.
 
-The `requirements.txt` file is blank and should be filled out with any project
-dependencies. There is a Python package called `pipreqs` that autogenerates the
-contents of the `requirements.txt` file based on the `import` statements in your
-`.py` files. To get this, run
-
+If you do not have pygame installed, please follow the instructions as advised on https://www.pygame.org/wiki/GettingStarted.
 ```
-pip install pipreqs
+python3 -m pip install -U pygame --user
 ```
 
-Then, in the root of your project repository, run:
-
-```
-pipreqs --mode compat
-```
-
-If you already have a `requirements.txt`, the above command will ask you to
-rerun the command with the `--force` flag to overwrite it.
