@@ -1,18 +1,13 @@
-# Python Project Template Repository
+# Letter Bubbles
 
-This is a template repository for a Python project. Feel free to use and edit
-this repository (including this file) for your needs. Below, find some
-instructions and tips for using this template repository.
+Letter Bubbles is a game in which the player the player clicks on corresponding letters to spell the given target word. Each correct letter grants one point, and completing a word grants an additional point! The objective is to get the highest score in 60 seconds.
 
 ## How to Use
 
-Click on the "Use this template" button in the top right corner to create a new
-repository based on this template. If this is for a class project, we ask that
-you keep it in the `olincollege` GitHub organization, and that you refrain from
-keeping the repository private. This will ensure that relevant people can access
-your repository for assessment, etc.
+Once you have word_game.py, word_controller.py, and word_view, run main.py to try the program.
 
 ## Requirements
+This game is built using the pygame library.
 
 The `requirements.txt` file is blank and should be filled out with any project
 dependencies. There is a Python package called `pipreqs` that autogenerates the
