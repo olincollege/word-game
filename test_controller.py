@@ -1,20 +1,22 @@
-import pytest
-import pygame
+"""
+Unit tests for the Controller class.
+"""
 from word_controller import Controller
-from word_game import Game
-from word_view import WordGameView
 
-class TestController:
-
-    @pytest.fixture
-    def controller_instance(self):
-        game = Game()
-        view = WordGameView()
-        controller = Controller(game, view)
-        return controller
-
-    def test_init(self, controller_instance):
-        assert controller_instance.game is not None
-        assert controller_instance.view is not None
-        assert controller_instance.running is True
-
+def test_update_score():
+    """
+    Tests that the score correctly adds one to current score.
+    """
+    controller = Controller()
+    controller.score = 10
+    controller.update_score()
+    assert controller.score == 11
+def test_time_penalty():
+    """
+    Tests that the time correctly subtracts three from the current time 
+    remaining.
+    """
+    controller = Controller()
+    controller.time_remaining = 10
+    controller.time_penalty()
+    assert controller.time_remaining == 7

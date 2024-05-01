@@ -7,24 +7,33 @@ import pygame
 
 
 class Controller:
+    """
+    Creates the class representing the Controller of the game.
+    """
     def __init__(self):
         """
         Initialize the Controller class.
         """
         self.score = 0
         self.time_remaining = 0
-
         self.game_over = False
         self.won = False
         self.bubbles = []
         self.current_word = ""
         self.pointer = 0
         self.epoch = 0
-
-
         self.word_complete = False
 
     def reset_game(self):
+        """
+        Resets the time and game over state of the game.
+
+        Args:
+            None.
+        
+        Returns:
+            None.
+        """
         self.score = 0
         self.time_remaining = 60
         self.epoch = time.time()
@@ -33,12 +42,21 @@ class Controller:
         self.won = False
 
     def next_word(self, new_word, bubbles):
+        """
+        Helper function that selects new word after previous word has been
+        completed.
+
+        Args:
+            None.
+        
+        Returns:
+            None.
+        """
         self.bubbles = bubbles
         self.current_word = new_word
         self.pointer = 0
 
         self.word_complete = False
-       
 
     def update(self, events):
         """
@@ -72,7 +90,6 @@ class Controller:
                         self.reset_game()
                     else:
                         pygame.display.flip()
-
 
         return mouse_position
 
@@ -108,7 +125,7 @@ class Controller:
 
     def time_penalty(self):
         """
-        Apply a time penalty of 3 units to the remaining time.
+        Apply a time penalty of 3 seconds to the remaining time.
 
         Args:
             None.
@@ -123,12 +140,18 @@ class Controller:
         Check if the clicked letter is correct.
 
         Args:
-            clicked_letter (str): The letter just clicked by the player.
+            clicked_letter: a string representing the letter just clicked by 
+            the player.
 
         Returns:
-            A boolean that represents True if the clicked letter is correct, False otherwise.
+            A boolean that represents True if the clicked letter is correct, 
+            False otherwise.
         """
-        correct_bubbles = [bubble for bubble in self.bubbles if bubble.letter == self.current_word[self.pointer]]
+        correct_bubbles = [
+            bubble
+            for bubble in self.bubbles
+            if bubble.letter == self.current_word[self.pointer]
+        ]
 
         for bubble in correct_bubbles:
             correct_letter_position = bubble.pos  # get the letter pos
@@ -140,10 +163,19 @@ class Controller:
             if distance <= bubble.radius:  # then clicked in circle
                 bubble.clicked = True
                 return True
-            
+
         return False
-    
+
     def check_word_complete(self):
+        """
+        Checks if the player has completed spelling the target word.
+
+        Args:
+            None.
+        
+        Returns:
+            None.
+        """
         if self.pointer == len(self.current_word):
             print("complete!")
             self.word_complete = True
@@ -162,4 +194,3 @@ class Controller:
         if self.time_remaining < 0:
             print("out of time!")
             self.game_over = True
-            # background = pygame.image.load()

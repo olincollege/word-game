@@ -1,8 +1,13 @@
+"""
+Module for main loop of the game.
+"""
+
 import pygame
 
 from word_game import Game
 from word_view import View
 from word_controller import Controller
+
 
 def main():
     """
@@ -17,7 +22,7 @@ def main():
     game_controller = Controller()
     game_view = View()
     game_model = Game(game_controller, game_view)
-    
+
     pygame.init()
 
     running = True
