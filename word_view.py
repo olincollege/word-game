@@ -167,7 +167,8 @@ class View:
                     self.screen, self.color, bubble.pos, bubble.radius
                 )
                 text = self.font.render(bubble.letter, True, (0, 0, 0))
-                self.screen.blit(text, (bubble.x - 9, bubble.y - 9))
+                self.screen.blit(text, (bubble.x_position - 9, 
+                                        bubble.y_position - 9))
 
 
 class Bubble:
