@@ -13,7 +13,7 @@ Quick start:
 python3 -m pip install -U pygame --user
 """
 
-## The Process
+## Process
 When you boot up the game, the program will select a random word from the word list as your target word. With that target word, the program will add each of its letters into a list, and then it will add additional letters which are incorrect. The letters are shuffled, so the order that they appear to the player is random.
 
 Each time the player clicks, the game checks if the click is the intended letter. If this is true, then the player is awarded one point. For each word that they complete, they gain an additional point. However, if the player hits an incorrect letter, three seconds is deducted from their time remaining. Once the player completes spelling a word, a new word is generated, and the cycle repeats. The view is updates with each iteration.
@@ -28,7 +28,8 @@ Surprisingly, implementing a restart function was difficult. There was a lot to 
 ![](https://github.com/olincollege/word-game/blob/main/letter_bubbles_screenshot.png?raw=true)
 This is how the gameplay looks!
 
-![](FinalPresentation.mp4)
+
+[![https://youtu.be/ebad3lAkrjM]](https://youtu.be/ebad3lAkrjM)
 Here is a video summarizing the project.
 
 ## Future
